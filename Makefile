@@ -6,31 +6,25 @@
 #    By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/20 11:30:42 by jpoulvel          #+#    #+#              #
-#    Updated: 2019/04/25 11:22:12 by pchambon         ###   ########.fr        #
+#    Updated: 2019/04/28 18:39:31 by pchambon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fractol
-
+LIB_DIR = X-Libft
+MLX_DIR = MiniLibX
 SRCS = srcs/main.c \
 		srcs/julia.c \
 		srcs/mandelbrot.c \
-		srcs/burningship.c \
+		srcs/mandelbar.c \
 		srcs/hud.c \
 		srcs/events.c \
 		srcs/events_ext.c \
 		srcs/color.c
-
-OBJ = $(SRCS:.c=.o)
-
-LIB_DIR = X-Libft
-MLX_DIR = MiniLibX
-
 INCL =$(LIB_DIR)/libft.a \
-		$(MLX_DIR)/libmlx.a \
-
+		$(MLX_DIR)/libmlx.a
+OBJ = $(SRCS:.c=.o)
 FRMWRK = -lmlx -framework OpenGL -framework AppKit
-
 FLAGS = -Wall -Wextra -Werror -I $(FRMWRK) $(INCL)
 
 all: LIB $(NAME)
@@ -52,10 +46,6 @@ fclean: clean
 	cd $(LIB_DIR) ; $(MAKE) fclean
 
 re: fclean $(NAME)
-
-aya: re
-	make clean
-	./fractol julia
 
 .PHONY: all clean fclean re
 

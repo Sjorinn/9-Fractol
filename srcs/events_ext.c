@@ -6,19 +6,37 @@
 /*   By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 16:09:44 by pchambon          #+#    #+#             */
-/*   Updated: 2019/04/25 16:03:59 by pchambon         ###   ########.fr       */
+/*   Updated: 2019/04/28 18:30:45 by pchambon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fractol.h"
 
-void	deal_space(t_mlx *data, int key)
+int		deal_highlight(int key, void *param)
 {
-	data->iter = 0;
-	data->j.zoom = 0;
-	data->j.move_x = 0;
-	data->j.move_y = 0;
-	julia_init(data, -0.8, 0.156);
+	t_mlx *data;
+
+	data = (t_mlx *)param;
+	if (key == 125)
+	{
+		if (data->h <= -1)
+			return (0);
+		if (data->h == 1)
+			data->h -= 2;
+		else
+			data->h--;
+	}
+	if (key == 126)
+	{
+		if (data->h >= MAX_ITER + data->iter - 1)
+			return (0);
+		if (data->h == -1)
+			data->h += 2;
+		else
+			data->h++;
+	}
+	fractal(data, data->j.j_r, data->j.j_i);
+	return (0);
 }
 
 int		deal_iter(int key, void *param)
@@ -26,20 +44,37 @@ int		deal_iter(int key, void *param)
 	t_mlx *data;
 
 	data = (t_mlx *)param;
-	if (key == 69 && data)
+	if (key == 69)
 	{
 		data->iter += 2;
-		julia(data, 0, 0, 0);
+		fractal(data, data->j.j_r, data->j.j_i);
 	}
 	if (key == 78)
 	{
 		data->iter -= 2;
-		julia(data, 0, 0, 0);
+		fractal(data, data->j.j_r, data->j.j_i);
 	}
 	return (1);
 }
 
-int		deal_mouse(int key, int x, int y, void *param)
+int		deal_move(int key, void *param)
+{
+	t_mlx *data;
+
+	data = (t_mlx *)param;
+	if (key == 13)
+		data->j.move_y += 0.012;
+	if (key == 0)
+		data->j.move_x += 0.012;
+	if (key == 1)
+		data->j.move_y -= 0.012;
+	if (key == 2)
+		data->j.move_x -= 0.012;
+	fractal(data, data->j.j_r, data->j.j_i);
+	return (0);
+}
+
+int		deal_zoom(int key, int x, int y, void *param)
 {
 	t_mlx *data;
 
@@ -48,7 +83,7 @@ int		deal_mouse(int key, int x, int y, void *param)
 		data->j.zoom += 0.1;
 	if (key == 5)
 		data->j.zoom -= 0.1;
-	julia(data, 0, 0, 0);
+	fractal(data, data->j.j_r, data->j.j_i);
 	return (1);
 }
 
@@ -56,11 +91,13 @@ int		deal_motion(int x, int y, void *param)
 {
 	t_mlx *data;
 
-	if (x < 0 || x >= F_WIDTH || y < 0 || y >= LONG || data->stop != 1)
-		return (0);
 	data = (t_mlx *)param;
-	data->j.c_R += ((F_WIDTH / 2) - x) * 0.00001;
-	data->j.c_I += ((LONG / 2) - y) * 0.00001;
-	julia(data, 0, 0, 0);
+	if (x < 0 || x >= F_WIDTH || y < 0 || y >= LONG || \
+		data->j.s == -1 || data->fractal != 1 || \
+		(data->j.j_r != -0.8 && data->j.j_i != 0.156))
+		return (0);
+	data->j.motion_x = x;
+	data->j.motion_y = y;
+	fractal(data, data->j.j_r, data->j.j_i);
 	return (0);
 }

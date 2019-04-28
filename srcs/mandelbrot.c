@@ -6,42 +6,69 @@
 /*   By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/24 14:54:50 by pchambon          #+#    #+#             */
-/*   Updated: 2019/04/25 16:06:19 by pchambon         ###   ########.fr       */
+/*   Updated: 2019/04/28 18:30:21 by pchambon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fractol.h"
 
-void	mandelbrot(t_mlx *data, int i, int x, int y)
+void	mandelbrot(t_mlx *d)
 {
-	int a;
-	int ib;
+	double	tab[6];
 
-	a = 0;
-	ib = 0;
-	while (y < LONG)
+	while (++d->j.y <= d->j.y_max)
 	{
-		x = -1;
-		while (x < F_WIDTH)
+		d->j.x = -1;
+		while (++d->j.x < F_WIDTH)
 		{
-			while (i < MAX_ITER)
+			d->j.iter = -1;
+			tab[1] = 0;
+			tab[2] = 0;
+			tab[4] = (d->j.y - LONG / 2) \
+				/ (0.5 * d->j.zoom * LONG) + d->j.move_y;
+			tab[3] = 1.5 * (d->j.x - 2 * F_WIDTH / 3) \
+				/ (0.6 * d->j.zoom * F_WIDTH) + d->j.move_x;
+			while (++d->j.iter < MAX_ITER + d->iter \
+				&& tab[1] * tab[1] + tab[2] * tab[2] <= 4)
 			{
-				i++;
+				tab[5] = tab[1] * tab[1] - tab[2] * tab[2] + tab[3];
+				tab[2] = 2 * tab[1] * tab[2] + tab[4];
+				tab[1] = tab[5];
 			}
-			x += PAS;
+			d->tab[(d->j.y * F_WIDTH) + d->j.x] = get_color(d, d->j.iter);
 		}
-		y += PAS;
 	}
 }
 
-void	mandelbrot_init(t_mlx *data)
+void	*mandelbrot_convert(void *param)
 {
-	int i;
-	int x;
-	int y;
+	t_mlx	*data;
+
+	data = (t_mlx *)param;
+	mandelbrot(data);
+	return (NULL);
+}
+
+void	mandelbrot_init(t_mlx *d)
+{
+	t_mlx		tab[THREAD_NUMBER];
+	pthread_t	t[THREAD_NUMBER];
+	int			i;
 
 	i = 0;
-	x = 0;
-	y = 0;
-	mandelbrot(data, i, x, y);
+	d->j.x = 0;
+	d->j.y = -1;
+	d->j.iter = 0;
+	d->fractal = 2;
+	while (i < THREAD_NUMBER)
+	{
+		ft_memcpy((void*)&tab[i], (void*)d, sizeof(t_mlx));
+		tab[i].j.y = THREAD_WIDTH * i;
+		tab[i].j.y_max = THREAD_WIDTH * (i + 1);
+		pthread_create(&t[i], NULL, mandelbrot_convert, &tab[i]);
+		i++;
+	}
+	while (i--)
+		pthread_join(t[i], NULL);
+	mlx_put_image_to_window(d->mlx_ptr, d->win_ptr, d->ptr, 0, 0);
 }
