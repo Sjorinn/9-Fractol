@@ -6,7 +6,7 @@
 /*   By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/03 15:57:21 by pchambon          #+#    #+#             */
-/*   Updated: 2019/04/28 18:22:33 by pchambon         ###   ########.fr       */
+/*   Updated: 2019/04/28 18:46:42 by pchambon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int		main(int argc, char **argv)
 	t_mlx	data;
 
 	if (argc != 2)
-		return (int_str("Usage: ./fractol julia / mandelbrot / mandelbar"));
+		return (int_str("Usage: ./fractol julia / mandelbrot / mandelbar\n"));
 	if (!(data.mlx_ptr = mlx_init()))
 		return (int_str("error\n"));
 	if (!(data.win_ptr = mlx_new_window(data.mlx_ptr, WIDTH, LONG, "Fractol")))
@@ -29,7 +29,7 @@ int		main(int argc, char **argv)
 		return (int_str("error\n"));
 	init_hud(&data);
 	if (parser(argv[1], &data) == -1)
-		return (int_str("Usage: ./fractol julia / mandelbrot / mandelbar"));
+		return (int_str("Usage: ./fractol julia / mandelbrot / mandelbar\n"));
 	mlx_key_hook(data.win_ptr, deal_key, &data);
 	mlx_mouse_hook(data.win_ptr, deal_zoom, &data);
 	mlx_hook(data.win_ptr, 6, (1L << 6), deal_motion, (void *)&data);
@@ -52,7 +52,7 @@ int		parser(char *fractal, t_mlx *data)
 		julia_init(data, data->j.j_r, data->j.j_i);
 	else if (!(strcmp(fractal, "mandelbrot")))
 		mandelbrot_init(data);
-	else if (!(strcmp(fractal, "mandelbrat")))
+	else if (!(strcmp(fractal, "mandelbar")))
 		mandelbar_init(data);
 	else
 		return (-1);

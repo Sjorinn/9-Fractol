@@ -6,7 +6,7 @@
 /*   By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/05 11:56:59 by pchambon          #+#    #+#             */
-/*   Updated: 2019/04/28 18:34:00 by pchambon         ###   ########.fr       */
+/*   Updated: 2019/04/28 18:48:16 by pchambon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,11 @@ void	deal_space(t_mlx *data, int key)
 	data->h = -1;
 	data->iter = 0;
 	data->j.zoom = 1;
-	data->fractal = 1;
 	data->j.move_x = 0;
 	data->j.move_y = 0;
-	data->j.j_r = -0.8;
-	data->j.j_i = 0.156;
 	data->j.motion_x = 0;
 	data->j.motion_y = 0;
-	julia_init(data, data->j.j_r, data->j.j_i);
+	fractal(data, data->j.j_r, data->j.j_i);
 }
 
 void	deal_fractal(t_mlx *data, int key)
@@ -70,9 +67,9 @@ void	deal_fractal(t_mlx *data, int key)
 	data->j.motion_y = 0;
 	if (key == 83 && data->fractal != 1)
 		julia_init(data, -0.8, 0.156);
-	if (key == 84)
+	if (key == 84 && data->fractal != 2)
 		mandelbrot_init(data);
-	if (key == 85)
+	if (key == 85 && data->fractal != 3)
 		mandelbar_init(data);
 }
 
