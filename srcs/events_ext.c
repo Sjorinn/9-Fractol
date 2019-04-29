@@ -6,7 +6,7 @@
 /*   By: pchambon <pchambon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 16:09:44 by pchambon          #+#    #+#             */
-/*   Updated: 2019/04/28 18:30:45 by pchambon         ###   ########.fr       */
+/*   Updated: 2019/04/29 13:43:13 by pchambon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,13 @@ int		deal_move(int key, void *param)
 
 	data = (t_mlx *)param;
 	if (key == 13)
-		data->j.move_y += 0.012;
+		data->j.move_y += 0.012 / data->j.zoom;
 	if (key == 0)
-		data->j.move_x += 0.012;
+		data->j.move_x += 0.012 / data->j.zoom;
 	if (key == 1)
-		data->j.move_y -= 0.012;
+		data->j.move_y -= 0.012 / data->j.zoom;
 	if (key == 2)
-		data->j.move_x -= 0.012;
+		data->j.move_x -= 0.012 / data->j.zoom;
 	fractal(data, data->j.j_r, data->j.j_i);
 	return (0);
 }
@@ -80,9 +80,9 @@ int		deal_zoom(int key, int x, int y, void *param)
 
 	data = (t_mlx *)param;
 	if (key == 4)
-		data->j.zoom += 0.1;
+		data->j.zoom *= 1.1;
 	if (key == 5)
-		data->j.zoom -= 0.1;
+		data->j.zoom /= 1.1;
 	fractal(data, data->j.j_r, data->j.j_i);
 	return (1);
 }
